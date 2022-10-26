@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h4>{{ listing.title }}</h4>
+    <ul>
+        <li>
+            {{ listing.description }}
+        </li>
+        <li>
+            {{ listing.starting_bid }}
+        </li>
+        <li>
+            {{ listing.category }}
+        </li>
+        {% if listing.image != '' %}
+            <li>
+                <img src="{{ listing.image }}" alt="image">
+            </li>
+        {% endif %}
+        <li>
+            Current Bid: {{ maxm }}
+        </li>
+    </ul>
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'listing' listing.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="amount">
+            <input type="submit" value="Bid">
+        </form>
+    {% endif %}
+{% endblock %}

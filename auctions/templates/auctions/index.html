@@ -6,7 +6,7 @@
         {% for listing in listings %}
             <ol>
                 <li>
-                    <h4>{{ listing.title }}</h4>
+                    <h4><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h4>
                     <ul>
                         <li>
                             {{ listing.description }}
@@ -26,5 +26,7 @@
                 </li>
             </ol>
         {% endfor %}
+    {% else %}
+        None
     {% endif %}
 {% endblock %}

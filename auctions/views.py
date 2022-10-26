@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User, Listing
+from .models import User, Listing, Bid
 
 
 def index(request):
@@ -55,6 +55,23 @@ def new_listing(request):
         return redirect("index")
 
 
+def listing(request, listing_id):
+    listing = Listing.objects.get(id=listing_id)
+    if request.method == 'POST':
+        bid = Bid()
+        bid.amount = request.POST.get("amount")
+        bid.listing = listing
+        bid.bidder = request.user
+        bid.save()
+    maxm = 'None'
+    bids = Bid.objects.order_by('-amount')[0]
+    if bids:
+        maxm = bids.amount
+    return render(request, "auctions/listing.html", {
+            "listing": listing,
+            "maxm": maxm
+        })
+    
 
 def register(request):
     if request.method == "POST":
