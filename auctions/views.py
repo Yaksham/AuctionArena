@@ -9,7 +9,10 @@ from .models import User, Listing
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    listings = Listing.objects.all()
+    return render(request, "auctions/index.html", {
+        "listings": listings
+    })
 
 
 def login_view(request):
@@ -39,7 +42,7 @@ def logout_view(request):
 @login_required
 def new_listing(request):
     if request.method == 'GET':
-        return render(request, "auctions/listing.html")
+        return render(request, "auctions/new_listing.html")
     else:
         listing = Listing()
         listing.title = request.POST.get("title")
