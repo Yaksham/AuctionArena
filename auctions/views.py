@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User
+from .models import User, Listing
 
 
 def index(request):
@@ -35,9 +36,21 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
-
+@login_required
 def new_listing(request):
-    return render(request, "auctions/listing.html")
+    if request.method == 'GET':
+        return render(request, "auctions/listing.html")
+    else:
+        listing = Listing()
+        listing.title = request.POST.get("title")
+        listing.description = request.POST.get("description")
+        listing.starting_bid = int(request.POST.get("starting_bid"))
+        listing.image = request.POST.get("image")
+        listing.creator = request.user
+        listing.category = request.POST.get("category")
+        listing.save()
+        return redirect("index")
+
 
 
 def register(request):

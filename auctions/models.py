@@ -10,9 +10,5 @@ class Listing(models.Model):
     description = models.CharField(max_length=256)
     starting_bid = models.IntegerField()
     image = models.URLField(blank=True, default='')
-
-class Bid(models.Model):
-    pass
-
-class Comment(models.Model):
-    pass
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
+    category = models.CharField(max_length=64)
