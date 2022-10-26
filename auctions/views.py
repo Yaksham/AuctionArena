@@ -36,6 +36,10 @@ def logout_view(request):
     return HttpResponseRedirect(reverse("index"))
 
 
+def new_listing(request):
+    return render(request, "auctions/listing.html")
+
+
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
