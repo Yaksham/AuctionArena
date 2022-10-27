@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from .forms import ListingForm, PlaceBid
 from .models import User, Listing, Bid
 
 
@@ -42,7 +43,9 @@ def logout_view(request):
 @login_required
 def new_listing(request):
     if request.method == 'GET':
-        return render(request, "auctions/new_listing.html")
+        return render(request, "auctions/new_listing.html", {
+            "form": ListingForm()
+        })
     else:
         listing = Listing()
         listing.title = request.POST.get("title")
