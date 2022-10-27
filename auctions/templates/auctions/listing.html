@@ -18,15 +18,22 @@
             </li>
         {% endif %}
         <li>
-            Current Bid: {{ maxm }}
+            {% if maxm > -1 %}
+                Current Bid: {{ maxm }}
+            {% else %}
+                Current Bid: No Bids Placed.
+            {% endif %}
         </li>
     </ul>
 
     {% if user.is_authenticated %}
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
-            <input type="number" name="amount">
+            {{ form }}
             <input type="submit" value="Bid">
         </form>
+    {% endif %}
+    {% if error %}
+        {{ error }}
     {% endif %}
 {% endblock %}

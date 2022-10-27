@@ -47,32 +47,46 @@ def new_listing(request):
             "form": ListingForm()
         })
     else:
-        listing = Listing()
-        listing.title = request.POST.get("title")
-        listing.description = request.POST.get("description")
-        listing.starting_bid = int(request.POST.get("starting_bid"))
-        listing.image = request.POST.get("image")
+        form = ListingForm(request.POST)
+        listing = form.save(commit=False)
         listing.creator = request.user
-        listing.category = request.POST.get("category")
         listing.save()
         return redirect("index")
 
 
 def listing(request, listing_id):
     listing = Listing.objects.get(id=listing_id)
-    if request.method == 'POST':
-        bid = Bid()
-        bid.amount = request.POST.get("amount")
-        bid.listing = listing
-        bid.bidder = request.user
-        bid.save()
-    maxm = 'None'
-    bids = Bid.objects.order_by('-amount')[0]
-    if bids:
+    try:
+        bids = Bid.objects.filter(listing=listing).order_by('-amount')[0]
         maxm = bids.amount
+    except:
+        maxm = -1
+    if request.method == 'POST':
+        form = PlaceBid(request.POST)
+        if form.is_valid():
+            if maxm > -1:
+                if form.cleaned_data['amount'] <= maxm:
+                    return render(request, "auctions/listing.html", {
+                    "listing": listing,
+                    "maxm": maxm,
+                    "form": PlaceBid(),
+                    "error": "Bid must be greater than current bid."
+                    })
+            elif form.cleaned_data["amount"] < listing.starting_bid:
+                return render(request, "auctions/listing.html", {
+                    "listing": listing,
+                    "maxm": maxm,
+                    "form": PlaceBid(),
+                    "error": "Bid must be at least equal to the starting bid."
+                    })
+            bid = form.save(commit=False)
+            bid.listing = listing
+            bid.bidder = request.user
+            bid.save()
     return render(request, "auctions/listing.html", {
             "listing": listing,
-            "maxm": maxm
+            "maxm": maxm,
+            "form": PlaceBid()
         })
     
 
