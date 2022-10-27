@@ -3,29 +3,29 @@
 {% block body %}
     <h2>Active Listings</h2>
     {% if listings %}
+        <ol>
         {% for listing in listings %}
-            <ol>
-                <li>
-                    <h4><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h4>
-                    <ul>
+            <li>
+                <h4><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h4>
+                <ul>
+                    <li>
+                        {{ listing.description }}
+                    </li>
+                    <li>
+                        {{ listing.starting_bid }}
+                    </li>
+                    <li>
+                        {{ listing.category }}
+                    </li>
+                    {% if listing.image != '' %}
                         <li>
-                            {{ listing.description }}
+                            <img src="{{ listing.image }}" alt="image">
                         </li>
-                        <li>
-                            {{ listing.starting_bid }}
-                        </li>
-                        <li>
-                            {{ listing.category }}
-                        </li>
-                        {% if listing.image != '' %}
-                            <li>
-                                <img src="{{ listing.image }}" alt="image">
-                            </li>
-                        {% endif %}
-                    </ul>
-                </li>
-            </ol>
+                    {% endif %}
+                </ul>
+            </li>
         {% endfor %}
+        </ol>
     {% else %}
         None
     {% endif %}

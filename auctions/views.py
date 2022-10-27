@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .forms import ListingForm, PlaceBid
-from .models import User, Listing, Bid
+from .models import User, Listing, Bid#, Watchlist
 
 
 def index(request):
@@ -56,15 +56,14 @@ def new_listing(request):
 
 def listing(request, listing_id):
     listing = Listing.objects.get(id=listing_id)
-    try:
-        bids = Bid.objects.filter(listing=listing).order_by('-amount')[0]
+    maxm = None
+    bids = Bid.objects.filter(listing=listing).order_by('-amount').first()
+    if bids is not None:
         maxm = bids.amount
-    except:
-        maxm = -1
     if request.method == 'POST':
         form = PlaceBid(request.POST)
         if form.is_valid():
-            if maxm > -1:
+            if maxm is not None:
                 if form.cleaned_data['amount'] <= maxm:
                     return render(request, "auctions/listing.html", {
                     "listing": listing,
@@ -79,10 +78,14 @@ def listing(request, listing_id):
                     "form": PlaceBid(),
                     "error": "Bid must be at least equal to the starting bid."
                     })
+            maxm = form.cleaned_data['amount']
             bid = form.save(commit=False)
             bid.listing = listing
             bid.bidder = request.user
             bid.save()
+    # wishlisted_items = Watchlist.objects.get(user=request.user)
+    # for item in items
+
     return render(request, "auctions/listing.html", {
             "listing": listing,
             "maxm": maxm,
