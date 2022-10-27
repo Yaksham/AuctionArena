@@ -1,6 +1,15 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+
+    <form action="{% url 'listing' listing.id %}" method="post">
+        {% csrf_token %}
+        {% if not watched %}
+            <input type="submit" value="Add to watchlist" name="add">
+        {% else %}
+            <input type="submit" value="Remove from watchlist" name="remove">
+        {% endif %}
+    </form>
     <h4>{{ listing.title }}</h4>
     <ul>
         <li>

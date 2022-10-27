@@ -60,6 +60,17 @@ def listing(request, listing_id):
     bids = Bid.objects.filter(listing=listing).order_by('-amount').first()
     if bids is not None:
         maxm = bids.amount
+
+    if request.method == 'POST' and 'add' in request.POST:
+        listing.watchlisted_by.add(request.user)
+        listing.save()
+    if request.method == 'POST' and 'remove' in request.POST:
+        listing.watchlisted_by.remove(request.user)
+        listing.save()
+
+    items = request.user.watched_listings.all()
+    watched = listing in items
+
     if request.method == 'POST':
         form = PlaceBid(request.POST)
         if form.is_valid():
@@ -69,6 +80,7 @@ def listing(request, listing_id):
                     "listing": listing,
                     "maxm": maxm,
                     "form": PlaceBid(),
+                    "watched": watched,
                     "error": "Bid must be greater than current bid."
                     })
             elif form.cleaned_data["amount"] < listing.starting_bid:
@@ -76,6 +88,7 @@ def listing(request, listing_id):
                     "listing": listing,
                     "maxm": maxm,
                     "form": PlaceBid(),
+                    "watched": watched,
                     "error": "Bid must be at least equal to the starting bid."
                     })
             maxm = form.cleaned_data['amount']
@@ -83,13 +96,11 @@ def listing(request, listing_id):
             bid.listing = listing
             bid.bidder = request.user
             bid.save()
-    # wishlisted_items = Watchlist.objects.get(user=request.user)
-    # for item in items
-
     return render(request, "auctions/listing.html", {
             "listing": listing,
             "maxm": maxm,
-            "form": PlaceBid()
+            "form": PlaceBid(),
+            "watched": watched
         })
     
 
