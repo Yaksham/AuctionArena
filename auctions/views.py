@@ -57,7 +57,8 @@ def new_listing(request):
 def listing(request, listing_id):
     listing = Listing.objects.get(id=listing_id)
     maxm = None
-    bids = Bid.objects.filter(listing=listing).order_by('-amount').first()
+    # bids = Bid.objects.filter(listing=listing).order_by('-amount').first()
+    bids = listing.item_bids.order_by('-amount').first()
     if bids is not None:
         maxm = bids.amount
 

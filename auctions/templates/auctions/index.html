@@ -1,4 +1,5 @@
 {% extends "auctions/layout.html" %}
+{% load auctions_extras %}
 
 {% block body %}
     <h2>Active Listings</h2>
@@ -12,7 +13,7 @@
                         {{ listing.description }}
                     </li>
                     <li>
-                        {{ listing.starting_bid }}
+                        {{ listing|current_bid }}
                     </li>
                     <li>
                         {{ listing.category }}
