@@ -56,12 +56,16 @@ def new_listing(request):
 
 def listing(request, listing_id):
     listing = Listing.objects.get(id=listing_id)
+    # listing_owner = listing.creator == request.user if listing.winner == '' else listing.winner.username
+    listing_owner = False
     maxm = None
-    # bids = Bid.objects.filter(listing=listing).order_by('-amount').first()
-    bids = listing.item_bids.order_by('-amount').first()
-    if bids is not None:
-        maxm = bids.amount
+    max_bid = listing.item_bids.order_by('-amount').first()
+    if max_bid is not None:
+        maxm = max_bid.amount
 
+    if request.method == 'POST' and 'close' in request.POST:
+        listing.winner = max_bid.bidder
+        listing.save()
     if request.method == 'POST' and 'add' in request.POST:
         listing.watchlisted_by.add(request.user)
         listing.save()
@@ -71,6 +75,11 @@ def listing(request, listing_id):
 
     items = request.user.watched_listings.all()
     watched = listing in items
+
+    if listing.creator == request.user:
+        listing_owner = True
+    if listing.winner is not None:
+        listing_owner = (listing.winner == request.user)
 
     if request.method == 'POST':
         form = PlaceBid(request.POST)
@@ -82,6 +91,7 @@ def listing(request, listing_id):
                     "maxm": maxm,
                     "form": PlaceBid(),
                     "watched": watched,
+                    "owner": listing_owner,
                     "error": "Bid must be greater than current bid."
                     })
             elif form.cleaned_data["amount"] < listing.starting_bid:
@@ -90,6 +100,7 @@ def listing(request, listing_id):
                     "maxm": maxm,
                     "form": PlaceBid(),
                     "watched": watched,
+                    "owner": listing_owner,
                     "error": "Bid must be at least equal to the starting bid."
                     })
             maxm = form.cleaned_data['amount']
@@ -97,11 +108,13 @@ def listing(request, listing_id):
             bid.listing = listing
             bid.bidder = request.user
             bid.save()
+            
     return render(request, "auctions/listing.html", {
             "listing": listing,
             "maxm": maxm,
             "form": PlaceBid(),
-            "watched": watched
+            "watched": watched,
+            "owner": listing_owner
         })
     
 

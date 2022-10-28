@@ -2,6 +2,21 @@
 
 {% block body %}
 
+    {% if listing.winner is None %}
+        {% if owner %}
+            <form action="{% url 'listing' listing.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Close Listing" name="close">
+            </form>
+        {% endif %}
+    {% else %}
+        <h3>Listing Closed</h3>
+        <h4>Winner: {{ listing.winner.username }}</h2>
+        {% if owner %}
+            <h4>You won this listing</h4>
+        {% endif %}
+    {% endif %}
+
     <form action="{% url 'listing' listing.id %}" method="post">
         {% csrf_token %}
         {% if not watched %}
@@ -10,6 +25,7 @@
             <input type="submit" value="Remove from watchlist" name="remove">
         {% endif %}
     </form>
+
     <h4>{{ listing.title }}</h4>
     <ul>
         <li>
