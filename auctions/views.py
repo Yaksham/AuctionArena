@@ -5,12 +5,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .forms import ListingForm, PlaceBid
-from .models import User, Listing, Bid#, Watchlist
+from .forms import ListingForm, PlaceBid, PostComment
+from .models import User, Listing, Bid, Comment
 
 
 def index(request):
-    listings = Listing.objects.all()
+    listings = Listing.objects.filter(winner=None)
     return render(request, "auctions/index.html", {
         "listings": listings
     })
@@ -74,13 +74,14 @@ def listing(request, listing_id):
         listing.save()
 
     watched = request.user.is_authenticated and listing in request.user.watched_listings.all()
+    comments = listing.listing_comments.all()
 
     if listing.creator == request.user:
         listing_owner = True
     if listing.winner is not None:
         listing_owner = (listing.winner == request.user)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'bid' in request.POST:
         form = PlaceBid(request.POST)
         if form.is_valid():
             if maxm is not None:
@@ -89,6 +90,8 @@ def listing(request, listing_id):
                     "listing": listing,
                     "maxm": maxm,
                     "form": PlaceBid(),
+                    "comment_form": PostComment(),
+                    "comments": comments,
                     "watched": watched,
                     "owner": listing_owner,
                     "error": "Bid must be greater than current bid."
@@ -98,6 +101,8 @@ def listing(request, listing_id):
                     "listing": listing,
                     "maxm": maxm,
                     "form": PlaceBid(),
+                    "comment_form": PostComment(),
+                    "comments": comments,
                     "watched": watched,
                     "owner": listing_owner,
                     "error": "Bid must be at least equal to the starting bid."
@@ -107,11 +112,20 @@ def listing(request, listing_id):
             bid.listing = listing
             bid.bidder = request.user
             bid.save()
+
+    if request.method == 'POST' and 'comment' in request.POST:
+        form = PostComment(request.POST)
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.listing = listing
+        comment.save()
             
     return render(request, "auctions/listing.html", {
             "listing": listing,
             "maxm": maxm,
             "form": PlaceBid(),
+            "comment_form": PostComment(),
+            "comments": comments,
             "watched": watched,
             "owner": listing_owner
         })

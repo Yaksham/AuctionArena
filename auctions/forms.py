@@ -1,5 +1,7 @@
+# from xml.etree.ElementTree import Comment
 from django import forms
-from .models import Listing, Bid
+from django.utils.translation import gettext_lazy as _
+from .models import Listing, Bid, Comment
 
 class ListingForm(forms.ModelForm):
     class Meta:
@@ -10,3 +12,14 @@ class PlaceBid(forms.ModelForm):
     class Meta:
         model = Bid
         fields = ['amount']
+        labels = {
+            'amount': _('Place a bid'),
+        }
+
+class PostComment(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        labels = {
+            'content': _('Post a comment'),
+        }

@@ -61,10 +61,30 @@
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
             {{ form }}
-            <input type="submit" value="Bid">
+            <input type="submit" value="Bid" name="bid">
         </form>
     {% endif %}
+
     {% if error %}
         {{ error }}
     {% endif %}
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'listing' listing.id %}" method="post">
+            {% csrf_token %}
+            {{ comment_form }}
+            <input type="submit" value="Comment" name="comment">
+        </form>
+    {% endif %}
+
+    <ul>
+        {% for comment in comments %}
+            <li>
+                ({{ comment.author.username }}
+                {{ comment.time }})
+                {{ comment.content }}
+            </li>
+        {% endfor %}
+    </ul>
+
 {% endblock %}

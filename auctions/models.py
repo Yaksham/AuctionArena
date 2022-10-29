@@ -24,3 +24,9 @@ class Bid(models.Model):
     time = models.DateTimeField(default=django.utils.timezone.now)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="item_bids")
     bidder = models.ForeignKey(User, related_name="user_bids", on_delete=models.CASCADE)
+
+class Comment(models.Model):
+    content = models.CharField(max_length=2048)
+    time = models.DateTimeField(default=django.utils.timezone.now)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing_comments")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comments")
