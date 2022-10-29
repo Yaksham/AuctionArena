@@ -9,6 +9,21 @@ from .forms import ListingForm, PlaceBid, PostComment
 from .models import User, Listing, Bid, Comment
 
 
+def categories(request):
+    categories = Listing.objects.values_list('category', flat=True).distinct().order_by('category')
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+
+
+def category(request, category_name):
+    listings = Listing.objects.filter(category=category_name, winner=None)
+    return render(request, "auctions/category.html", {
+        "listings": listings,
+        "category_name": category_name
+    })
+
+
 def index(request):
     listings = Listing.objects.filter(winner=None)
     return render(request, "auctions/index.html", {
@@ -39,19 +54,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
-@login_required
-def new_listing(request):
-    if request.method == 'GET':
-        return render(request, "auctions/new_listing.html", {
-            "form": ListingForm()
-        })
-    else:
-        form = ListingForm(request.POST)
-        listing = form.save(commit=False)
-        listing.creator = request.user
-        listing.save()
-        return redirect("index")
 
 
 def listing(request, listing_id):
@@ -129,7 +131,21 @@ def listing(request, listing_id):
             "watched": watched,
             "owner": listing_owner
         })
-    
+
+
+@login_required
+def new_listing(request):
+    if request.method == 'GET':
+        return render(request, "auctions/new_listing.html", {
+            "form": ListingForm()
+        })
+    else:
+        form = ListingForm(request.POST)
+        listing = form.save(commit=False)
+        listing.creator = request.user
+        listing.save()
+        return redirect("index")
+
 
 def register(request):
     if request.method == "POST":
