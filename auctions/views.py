@@ -73,8 +73,7 @@ def listing(request, listing_id):
         listing.watchlisted_by.remove(request.user)
         listing.save()
 
-    items = request.user.watched_listings.all()
-    watched = listing in items
+    watched = request.user.is_authenticated and listing in request.user.watched_listings.all()
 
     if listing.creator == request.user:
         listing_owner = True
@@ -143,3 +142,11 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+def watchlist(request):
+    list = request.user.watched_listings.all()
+    if not len(list):
+        list = None
+    return render(request, "auctions/watchlist.html", {
+        "list": list
+    })

@@ -1,5 +1,9 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %} 
+    {{ listing.title }}
+{% endblock %}
+
 {% block body %}
 
     {% if listing.winner is None %}
@@ -17,14 +21,16 @@
         {% endif %}
     {% endif %}
 
-    <form action="{% url 'listing' listing.id %}" method="post">
-        {% csrf_token %}
-        {% if not watched %}
-            <input type="submit" value="Add to watchlist" name="add">
-        {% else %}
-            <input type="submit" value="Remove from watchlist" name="remove">
-        {% endif %}
-    </form>
+    {% if user.is_authenticated %}
+        <form action="{% url 'listing' listing.id %}" method="post">
+            {% csrf_token %}
+            {% if not watched %}
+                <input type="submit" value="Add to watchlist" name="add">
+            {% else %}
+                <input type="submit" value="Remove from watchlist" name="remove">
+            {% endif %}
+        </form>
+    {% endif %}
 
     <h4>{{ listing.title }}</h4>
     <ul>
