@@ -19,14 +19,23 @@ class Listing(models.Model):
     related_name="wins")
     watchlisted_by = models.ManyToManyField(User, blank=True, related_name="watched_listings")
 
+    def __str__(self):
+        return f"{self.id}: {self.title} by {self.creator}"
+
 class Bid(models.Model):
     amount = models.IntegerField()
     time = models.DateTimeField(default=django.utils.timezone.now)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="item_bids")
     bidder = models.ForeignKey(User, related_name="user_bids", on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.id}: {self.bidder} bid {self.amount} on {self.listing}"
+
 class Comment(models.Model):
     content = models.CharField(max_length=2048)
     time = models.DateTimeField(default=django.utils.timezone.now)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing_comments")
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comments")
+
+    def __str__(self):
+        return f"{self.id}: {self.author} posted {self.content} on {self.listing}"
