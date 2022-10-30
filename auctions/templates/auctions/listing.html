@@ -1,4 +1,6 @@
 {% extends "auctions/layout.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
 
 {% block title %} 
     {{ listing.title }}
@@ -10,7 +12,7 @@
         {% if owner %}
             <form action="{% url 'listing' listing.id %}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Close Listing" name="close">
+                <input type="submit" class="btn btn-dark" value="Close Listing" name="close">
             </form>
         {% endif %}
     {% else %}
@@ -25,9 +27,9 @@
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
             {% if not watched %}
-                <input type="submit" value="Add to watchlist" name="add">
+                <input type="submit" class="btn btn-success" value="Add to watchlist" name="add">
             {% else %}
-                <input type="submit" value="Remove from watchlist" name="remove">
+                <input type="submit" class="btn btn-danger" value="Remove from watchlist" name="remove">
             {% endif %}
         </form>
     {% endif %}
@@ -60,19 +62,21 @@
     {% if user.is_authenticated %}
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
-            {{ form }}
+            {{ form|crispy }}
             <input type="submit" value="Bid" name="bid">
         </form>
     {% endif %}
 
     {% if error %}
-        {{ error }}
+        <div class="alert alert-warning" role="alert">
+            {{ error }}
+        </div>
     {% endif %}
 
     {% if user.is_authenticated %}
         <form action="{% url 'listing' listing.id %}" method="post">
             {% csrf_token %}
-            {{ comment_form }}
+            {{ comment_form|crispy }}
             <input type="submit" value="Comment" name="comment">
         </form>
     {% endif %}
