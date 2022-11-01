@@ -1,3 +1,53 @@
 body {
     padding: 10px;
 }
+
+.page {
+    display: flex;
+    flex-direction: column;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.listing {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.main a {
+    text-decoration: none;
+}
+
+#avail {
+    color: green;
+    font-weight: 600;
+}
+
+#noavail {
+    color: red;
+    font-weight: 600;
+}
+
+.main p {
+    margin: 12px 0;
+    font-size: 20px;
+}
+
+.alert {
+    margin: 8px;
+    padding: 10px !important;
+}
+
+#list-img {
+    width: 35vw;
+}

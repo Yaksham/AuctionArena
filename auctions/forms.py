@@ -13,7 +13,7 @@ class PlaceBid(forms.ModelForm):
         model = Bid
         fields = ['amount']
         labels = {
-            'amount': _('Place a bid'),
+            'amount': _(''),
         }
 
 class PostComment(forms.ModelForm):
