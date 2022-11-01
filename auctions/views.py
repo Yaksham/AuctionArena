@@ -10,7 +10,7 @@ from .models import User, Listing, Bid, Comment
 
 
 def categories(request):
-    categories = Listing.objects.values_list('category', flat=True).distinct().order_by('category')
+    categories = Listing.objects.values_list('category', flat=True).distinct().order_by('category').filter(winner=None)
     return render(request, "auctions/categories.html", {
         "categories": categories
     })

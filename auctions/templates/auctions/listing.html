@@ -72,7 +72,7 @@
                     <form id="bidform" action="{% url 'listing' listing.id %}" method="post">
                         {% csrf_token %}
                         {{ form|crispy }}
-                        <input type="submit" value="Bid" name="bid">
+                        <input type="submit" class="btn btn-dark" value="Bid" name="bid">
                     </form>
                 {% endif %}
                 {% if error %}
@@ -84,22 +84,43 @@
         </div>
     </div>
 
-    {% if user.is_authenticated %}
-        <form action="{% url 'listing' listing.id %}" method="post">
-            {% csrf_token %}
-            {{ comment_form|crispy }}
-            <input type="submit" value="Comment" name="comment">
-        </form>
-    {% endif %}
+    <div class="row d-flex justify-content-center comments">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                <div class="card-body p-4">
+                    <div class="form-outline mb-4">
+                        {% if user.is_authenticated %}
+                            <form action="{% url 'listing' listing.id %}" method="post">
+                                {% csrf_token %}
+                                    {{ comment_form|crispy }}
+                                <input type="submit" class="btn btn-secondary" value="Comment" name="comment">
+                            </form>
+                        {% endif %}
+                        <!-- <input type="text" id="addANote" class="form-control" placeholder="Type comment..." />
+                        <label class="form-label" for="addANote">+ Add a note</label> -->
+                    </div>
+                    {% for comment in comments %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <p>{{ comment.content }}</p>
+    
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex flex-row align-items-center">
+                                    <p class="small mb-0 ms-2">{{ comment.author }}</p>
+                                </div>
+                                <div class="d-flex flex-row align-items-center">
+                                    <p class="small text-muted mb-0">{{ comment.time }}</p>
+                                    <i class="far fa-thumbs-up mx-2 fa-xs text-black" style="margin-top: -0.16rem;"></i>
+                                    <!-- <p class="small text-muted mb-0">3</p> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <ul>
-        {% for comment in comments %}
-            <li>
-                ({{ comment.author.username }}
-                {{ comment.time }})
-                {{ comment.content }}
-            </li>
-        {% endfor %}
-    </ul>
 
 {% endblock %}
