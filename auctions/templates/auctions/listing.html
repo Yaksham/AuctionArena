@@ -10,6 +10,16 @@
     <div class="page">
         <div class="buttons">
             {% if listing.winner is None %}
+                {% if user.is_authenticated %}
+                    <form action="{% url 'listing' listing.id %}" method="post">
+                        {% csrf_token %}
+                        {% if not watched %}
+                            <input type="submit" class="btn btn-success" value="Add to watchlist" name="add">
+                        {% else %}
+                            <input type="submit" class="btn btn-secondary" value="Remove from watchlist" name="remove">
+                        {% endif %}
+                    </form>
+                {% endif %}
                 {% if owner %}
                     <form id="close"c action="{% url 'listing' listing.id %}" method="post">
                         {% csrf_token %}
@@ -17,22 +27,13 @@
                     </form>
                 {% endif %}
             {% else %}
-                <h3>Listing Closed</h3>
-                <h4>Winner: {{ listing.winner.username }}</h2>
-                {% if owner %}
-                    <h4>You won this listing</h4>
-                {% endif %}
-            {% endif %}
-    
-            {% if user.is_authenticated %}
-                <form action="{% url 'listing' listing.id %}" method="post">
-                    {% csrf_token %}
-                    {% if not watched %}
-                        <input type="submit" class="btn btn-success" value="Add to watchlist" name="add">
+                <div class="alert alert-info win" role="alert">
+                    {% if not owner %}
+                        Listing was won by {{ listing.winner.username }}
                     {% else %}
-                        <input type="submit" class="btn btn-secondary" value="Remove from watchlist" name="remove">
+                        You won this listing
                     {% endif %}
-                </form>
+                </div>
             {% endif %}
         </div>
         <div class="listing">
@@ -57,10 +58,14 @@
                     {{ listing.description }}
                 </p>
                 <h3>
-                    {% if maxm is not None %}
-                        Current Bid: <span style="color: green; font-weight: 600;">₹{{ maxm }}</span>
+                    {% if listing.winner is not None %}
+                        Sold At: <span style="color: red; font-weight: 600;">₹{{ maxm }}</span>
                     {% else %}
-                        Starting Price: <span style="color: green; font-weight: 600;">₹{{ listing.starting_bid }}</span>
+                        {% if maxm is not None %}
+                            Current Bid: <span style="color: green; font-weight: 600;">₹{{ maxm }}</span>
+                        {% else %}
+                            Starting Price: <span style="color: green; font-weight: 600;">₹{{ listing.starting_bid }}</span>
+                        {% endif %}
                     {% endif %}
                 </h3>
                 {% if user.is_authenticated %}

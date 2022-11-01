@@ -2,15 +2,26 @@ body {
     padding: 10px;
 }
 
+#banner {
+    font-size: 30px;
+    font-weight: 600;
+}
+
 .page {
     display: flex;
     flex-direction: column;
+}
+
+.win {
+    margin: 0 auto !important;
+    font-size: 20px;
 }
 
 .buttons {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .listing {
