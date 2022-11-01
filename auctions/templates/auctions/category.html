@@ -8,29 +8,22 @@
 {% block body %}
     <h2>{{ category_name|title }}</h2>
     {% if listings %}
-        <ol>
+    <div class="row row-cols-1 row-cols-md-5 g-4">
         {% for listing in listings %}
-            <li>
-                <h4><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h4>
-                <ul>
-                    <li>
-                        {{ listing.description }}
-                    </li>
-                    <li>
-                        {{ listing|current_bid }}
-                    </li>
-                    <li>
-                        {{ listing.category }}
-                    </li>
-                    {% if listing.image != '' %}
-                        
-                            <img src="{{ listing.image }}" width="200" alt="image">
-                        
-                    {% endif %}
-                </ul>
-            </li>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ listing.image }}" alt="listing image" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title index-item"><a href="{% url 'listing' listing.id %}"> {{ listing.title }} </a></h5>
+                        <p class="card-text">{{ listing.description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small> ₹{{ listing|current_bid }} </small>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
-        </ol>
+    </div>
     {% else %}
         None
     {% endif %}

@@ -6,13 +6,12 @@
 
 {% block body %}
     {% if list is not None %}
-        <ul>
+        <h2 style="margin-bottom:20px;">Watchlist</h2>
+        <div class="list-group list-group-light" style="width: 40vw;">
             {% for listing in list %}
-                <li>
-                    <a href="{% url 'listing' listing.id %}"><h3>{{ listing.title }}</h3></a>
-                </li>
+                <a href="{% url 'listing' listing.id %}" class="list-group-item list-group-item-action px-3 border-3 ripple">{{ listing.title }}</a>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         <h3>No items in watchlist</h3>
     {% endif %}
